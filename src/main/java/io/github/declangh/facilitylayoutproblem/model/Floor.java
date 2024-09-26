@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A square ground with a list of {@link Hole} that can be occupied by a {@link Station}
@@ -31,16 +32,21 @@ public class Floor {
     }
 
     private void populateFloor(List<Station> stations, int rootNumber) {
-        for (int i=stations.size(); i<numberOfHoles; i++) {
-            stations.add(null);
+        // make a deep copy
+        List<Station> stationsCopy = stations.stream()
+                .map(Station::new)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        for (int i=stationsCopy.size(); i<numberOfHoles; i++) {
+            stationsCopy.add(null);
         }
-        Collections.shuffle(stations);
+        Collections.shuffle(stationsCopy);
 
         int index = 0;
         for (int i = 0; i < rootNumber; i++) {
             List<Hole> row = new ArrayList<>();
             for (int j = 0; j < rootNumber; j++) {
-                row.add(new Hole(i, j, stations.get(index++)));
+                row.add(new Hole(i, j, stationsCopy.get(index++)));
             }
             holes.add(row);
         }
