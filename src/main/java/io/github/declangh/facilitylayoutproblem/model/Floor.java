@@ -31,13 +31,13 @@ public class Floor {
     }
 
     private void populateFloor(List<Station> stations, int rootNumber) {
-        for (int i=stations.size(); i<=numberOfHoles; i++) {
+        for (int i=stations.size(); i<numberOfHoles; i++) {
             stations.add(null);
         }
         Collections.shuffle(stations);
 
         int index = 0;
-        for (int i = 0; i < numberOfHoles; i++) {
+        for (int i = 0; i < rootNumber; i++) {
             List<Hole> row = new ArrayList<>();
             for (int j = 0; j < rootNumber; j++) {
                 row.add(new Hole(i, j, stations.get(index++)));
