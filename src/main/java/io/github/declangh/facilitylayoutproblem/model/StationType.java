@@ -6,6 +6,8 @@ public enum StationType {
     SECURITY,
     HEALTH,
     POWER,
+    HOME,
+    FOOD,
     FIRE
 }
 
