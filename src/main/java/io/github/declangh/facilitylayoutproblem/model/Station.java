@@ -27,20 +27,20 @@ public class Station {
     }
 
     public Station(@NotNull Station station) {
-        this.stationId = station.getStationId();
-        this.stationType = station.getStationType();
-        this.stationColor = station.getStationColor();
+        this.stationId = station.getId();
+        this.stationType = station.getType();
+        this.stationColor = station.getColor();
     }
 
-    public StationType getStationType() {
+    public StationType getType() {
         return stationType;
     }
 
-    public int getStationId() {
+    public int getId() {
         return stationId;
     }
 
-    public Color getStationColor() {
+    public Color getColor() {
         return stationColor;
     }
 }
