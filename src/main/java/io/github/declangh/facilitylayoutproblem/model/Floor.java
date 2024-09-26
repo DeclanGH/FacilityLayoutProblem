@@ -14,7 +14,7 @@ public class Floor {
 
     private final int numberOfSpots;
     private final int numberOfHoles;
-    private List<List<Hole>> holes;
+    private final ArrayList<ArrayList<Hole>> holes;
 
     /**
      * @param stations List of stations to be put on the floor
@@ -23,8 +23,8 @@ public class Floor {
         this.numberOfSpots = stations.size();
 
         /* Since Floor is a square ground, we want holes to be a square value. To achieve this,
-           holes must be the next square number when spots is multiplied by two */
-        int rootNumber = ((int) Math.sqrt(numberOfSpots *2)) + 1;
+           holes must be the next square number when spots is tripled */
+        int rootNumber = ((int) Math.sqrt(numberOfSpots *3)) + 1;
         this.numberOfHoles = rootNumber*rootNumber;
         this.holes = new ArrayList<>(rootNumber);
 
@@ -44,7 +44,7 @@ public class Floor {
 
         int index = 0;
         for (int i = 0; i < rootNumber; i++) {
-            List<Hole> row = new ArrayList<>();
+            ArrayList<Hole> row = new ArrayList<>();
             for (int j = 0; j < rootNumber; j++) {
                 row.add(new Hole(i, j, stationsCopy.get(index++)));
             }
@@ -58,5 +58,9 @@ public class Floor {
 
     public int getNumberOfHoles() {
         return numberOfHoles;
+    }
+
+    public ArrayList<ArrayList<Hole>> getHoles() {
+        return holes;
     }
 }
