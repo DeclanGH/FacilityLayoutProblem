@@ -1,5 +1,7 @@
 package io.github.declangh.facilitylayoutproblem.view;
 
+import io.github.declangh.facilitylayoutproblem.model.Floor;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -19,8 +21,8 @@ public class Display extends JFrame {
         setLayout(new GridLayout(1, 1, 1, 1));
     }
 
-    public void turnOn() {
-        Panel panel = new Panel();
+    public void show(Floor floor) {
+        Panel panel = new Panel(floor);
         add(panel);
 
         setVisible(true);
