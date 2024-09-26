@@ -31,7 +31,7 @@ public class Floor {
         populateFloor(stations, rootNumber);
     }
 
-    private void populateFloor(List<Station> stations, int rootNumber) {
+    private void populateFloor(@NotNull List<Station> stations, int rootNumber) {
         // make a deep copy
         List<Station> stationsCopy = stations.stream()
                 .map(Station::new)
