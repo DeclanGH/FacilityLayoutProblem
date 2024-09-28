@@ -2,7 +2,12 @@ package io.github.declangh.facilitylayoutproblem.model;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.Color;
+
+
 public class Hole {
+    public static final Color COLOR = new Color(238,238,238);
+
     private final int xCoordinate;
     private final int yCoordinate;
     private Station station;
@@ -53,5 +58,9 @@ public class Hole {
 
     public boolean isOccupied() {
         return station != null;
+    }
+
+    public Hole deepCopy() {
+        return new Hole(this.xCoordinate, this.yCoordinate, isOccupied() ? this.station.deepCopy() : null);
     }
 }

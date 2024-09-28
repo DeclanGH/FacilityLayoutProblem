@@ -31,10 +31,17 @@ public class Floor {
         populateFloor(stations, rootNumber);
     }
 
+    // for deep copying purposes
+    private Floor(int numberOfSpots, int numberOfHoles, ArrayList<ArrayList<Hole>> holesCopy) {
+        this.numberOfSpots = numberOfSpots;
+        this.numberOfHoles = numberOfHoles;
+        this.holes = holesCopy;
+    }
+
     private void populateFloor(@NotNull List<Station> stations, int rootNumber) {
         // make a deep copy
         List<Station> stationsCopy = stations.stream()
-                .map(Station::new)
+                .map(Station::deepCopy)
                 .collect(Collectors.toCollection(ArrayList::new));
 
         for (int i=stationsCopy.size(); i<numberOfHoles; i++) {
@@ -62,5 +69,15 @@ public class Floor {
 
     public ArrayList<ArrayList<Hole>> getHoles() {
         return holes;
+    }
+
+    public Floor deepCopy() {
+        ArrayList<ArrayList<Hole>> holesCopy = holes.stream()
+                .map(row -> row.stream()
+                        .map(Hole::deepCopy)
+                        .collect(Collectors.toCollection(ArrayList::new)))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        return new Floor(this.numberOfSpots, this.numberOfHoles, holesCopy);
     }
 }
