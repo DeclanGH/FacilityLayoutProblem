@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -47,7 +48,7 @@ public class Floor {
         for (int i=stationsCopy.size(); i<numberOfHoles; i++) {
             stationsCopy.add(null);
         }
-        Collections.shuffle(stationsCopy);
+        shuffle(stationsCopy);
 
         int index = 0;
         for (int i = 0; i < rootNumber; i++) {
@@ -69,6 +70,13 @@ public class Floor {
 
     public ArrayList<ArrayList<Hole>> getHoles() {
         return holes;
+    }
+
+    private void shuffle(@NotNull List<Station> stations) {
+        for (int currIdx= stations.size()-1; currIdx>0; currIdx--) {
+            int rndIdx = ThreadLocalRandom.current().nextInt(currIdx);
+            Collections.swap(stations, rndIdx, currIdx);
+        }
     }
 
     public Floor deepCopy() {
