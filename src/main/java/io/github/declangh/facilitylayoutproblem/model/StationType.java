@@ -1,17 +1,24 @@
 package io.github.declangh.facilitylayoutproblem.model;
 
-public enum StationType {
-    MANUFACTURING,
-    DISTRIBUTION,
-    SECURITY,
-    HEALTH,
-    POWER,
-    HOME,
-    FOOD,
-    FIRE
-}
+import java.awt.Color;
 
-/*** (add food and home)
- * This is my Environment/Campus (like the Google or Apple campus)
- * Environments will generally have a bunch of manufacturing stations,
- */
+public enum StationType {
+    MANUFACTURING(new Color(204, 102, 0)),
+    DISTRIBUTION(new Color(66, 0, 248)),
+    SECURITY(new Color(9,93,216)),
+    HEALTH(new Color(57, 255, 20)),
+    POWER(new Color(128, 128, 128)),
+    HOME(new Color(81, 59, 41)),
+    FOOD(new Color(247, 255, 0)),
+    FIRE(new Color(255, 51, 51));
+
+    private final Color color;
+
+    StationType(Color color) {
+        this.color = color;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+}
