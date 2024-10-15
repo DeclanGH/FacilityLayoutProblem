@@ -40,20 +40,30 @@ public class Hole {
         return station;
     }
 
-    public boolean setStation(@NotNull Station station) {
+    /**
+     * Attempts to place a Station on a spot.
+     *
+     * @param station The station to be placed on the spot
+     */
+    public void placeStation(@NotNull Station station) {
         if (this.station == null) {
             this.station = station;
-            return true;
+        } else {
+            throw new RuntimeException("Can't place Station in an occupied hole");
         }
-        return false;
     }
 
-    public boolean removeStation() {
-        if (station != null) {
-            station = null;
-            return true;
+    /**
+     * Removes a station from the Hole if any.
+     * @return Station s where s is the station that was removed
+     */
+    public Station removeStation() {
+        if (this.station != null) {
+            Station clone = this.station.deepCopy();
+            this.station = null;
+            return clone;
         }
-        return false;
+        return null;
     }
 
     public boolean isOccupied() {
