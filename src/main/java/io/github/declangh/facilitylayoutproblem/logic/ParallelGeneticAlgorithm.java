@@ -1,46 +1,49 @@
 package io.github.declangh.facilitylayoutproblem.logic;
 
+import io.github.declangh.facilitylayoutproblem.model.Floor;
 import io.github.declangh.facilitylayoutproblem.view.Display;
 
-public class ParallelGeneticAlgorithm implements Runnable {
+import java.util.concurrent.Exchanger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
 
-    public static final int MAX_GENERATIONS = 1000;
+public class ParallelGeneticAlgorithm {
 
-    public static final int NUMBER_OF_THREADS = 2;
-
-    public static final int NUMBER_OF_MANUFACTURING_STATIONS = 10;
-    public static final int NUMBER_OF_DISTRIBUTION_STATIONS = 10;
-    public static final int NUMBER_OF_SECURITY_STATIONS = 10;
-    public static final int NUMBER_OF_HEALTH_STATIONS = 10;
-    public static final int NUMBER_OF_POWER_STATIONS = 10;
-    public static final int NUMBER_OF_FIRE_STATIONS = 10;
-
-    private final int NUMBER_OF_STATIONS = NUMBER_OF_MANUFACTURING_STATIONS + NUMBER_OF_DISTRIBUTION_STATIONS
-            + NUMBER_OF_SECURITY_STATIONS + NUMBER_OF_HEALTH_STATIONS
-            + NUMBER_OF_POWER_STATIONS + NUMBER_OF_FIRE_STATIONS;
+    private final Display snapShotsDisplay;
+    public static final int NUMBER_OF_THREADS = 32;
 
     public ParallelGeneticAlgorithm() {
-        createInitialPopulation();
+        snapShotsDisplay = new Display();
     }
 
-    private void createInitialPopulation() {
-
-    }
-
-    @Override
+    /**
+     * Spawns 32 threads to run {@link FLPGeneticAlgorithm} in parallel. <br>
+     * Stops when one thread converges or all threads have gotten to the maximum number of generations.
+     */
     public void run() {
-        Display display = new Display();
-        display.turnOn();
-        // selection
+        ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+        Phaser phaser = new Phaser(NUMBER_OF_THREADS);
+        Exchanger<Floor> exchanger = new Exchanger<>();
 
-        // cross-over
+        /*FLPGeneticAlgorithm f = new FLPGeneticAlgorithm(("Thread-1"), phaser, exchanger, snapShotsDisplay);
+        f.run();*/
 
-        // mutation
+        for (int i = 0; i < NUMBER_OF_THREADS; i++) {
+            executor.submit(new FLPGeneticAlgorithm(("Thread-"+ i), phaser, exchanger, snapShotsDisplay));
+        }
 
-    }
+        executor.shutdown();
 
-    private void startParallelGeneticAlgorithm() {
-        Display display = new Display();
-        display.turnOn();
+        try {
+            if (!executor.awaitTermination(1000001, TimeUnit.MILLISECONDS)) {
+                System.out.println("Thread pool didn't terminate properly");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        snapShotsDisplay.showSnapshots();
     }
 }
