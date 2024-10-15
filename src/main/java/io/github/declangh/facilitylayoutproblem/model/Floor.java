@@ -13,62 +13,98 @@ import java.util.stream.Collectors;
  */
 public class Floor {
 
-    private final int numberOfSpots;
+    private double fitnessScore;
+    private final int sideLength;
     private final int numberOfHoles;
-    private final ArrayList<ArrayList<Hole>> holes;
+    private final ArrayList<Hole> holes;
 
     /**
      * @param stations List of stations to be put on the floor
      */
     public Floor(@NotNull final List<Station> stations) {
-        this.numberOfSpots = stations.size();
-
+        this.fitnessScore = Integer.MIN_VALUE;
+        int numberOfSpots = stations.size();
         /* Since Floor is a square ground, we want holes to be a square value. To achieve this,
            holes must be the next square number when spots is tripled */
-        int rootNumber = ((int) Math.sqrt(numberOfSpots *3)) + 1;
-        this.numberOfHoles = rootNumber*rootNumber;
-        this.holes = new ArrayList<>(rootNumber);
+        sideLength = ((int) Math.sqrt(numberOfSpots*2)) + 1;
+        this.numberOfHoles = sideLength*sideLength;
+        this.holes = new ArrayList<>(numberOfHoles);
 
-        populateFloor(stations, rootNumber);
+        populateFloor(stations);
+    }
+
+    /**
+     * <p>Creates an empty square floor (one with no station) using the specified side length. Number of
+     * holes on this floor will be the square of the side length.<p/>
+     *
+     * @throws IllegalArgumentException If the sideLength parameter is less than 1
+     *
+     * @param sideLength number of holes on one side of the floor.
+     */
+    public Floor(int sideLength) {
+        if (sideLength <= 1) {
+            throw new IllegalArgumentException("Cannot have a side length less than 1");
+        }
+        this.fitnessScore = Double.MIN_VALUE;
+        this.sideLength = sideLength;
+        this.numberOfHoles = sideLength*sideLength;
+        this.holes = new ArrayList<>(numberOfHoles);
+
+        for (int i = 0; i < this.sideLength; i++) {
+            for (int j = 0; j < this.sideLength; j++) {
+                holes.add(new Hole(i, j));
+            }
+        }
     }
 
     // for deep copying purposes
-    private Floor(int numberOfSpots, int numberOfHoles, ArrayList<ArrayList<Hole>> holesCopy) {
-        this.numberOfSpots = numberOfSpots;
+    private Floor(final double fitnessScore,
+                  final int numberOfHoles,
+                  final int sideLength,
+                  @NotNull final ArrayList<Hole> holesCopy) {
+        this.fitnessScore = fitnessScore;
         this.numberOfHoles = numberOfHoles;
+        this.sideLength = sideLength;
         this.holes = holesCopy;
     }
 
-    private void populateFloor(@NotNull List<Station> stations, int rootNumber) {
+    private void populateFloor(@NotNull List<Station> stations) {
         // make a deep copy
         List<Station> stationsCopy = stations.stream()
                 .map(Station::deepCopy)
                 .collect(Collectors.toCollection(ArrayList::new));
-
+        // add null stations that will serve as unoccupied holes
         for (int i=stationsCopy.size(); i<numberOfHoles; i++) {
             stationsCopy.add(null);
         }
+        // shuffle before putting in hole so that hole coordinates are not changed/disrupted
         shuffle(stationsCopy);
 
         int index = 0;
-        for (int i = 0; i < rootNumber; i++) {
-            ArrayList<Hole> row = new ArrayList<>();
-            for (int j = 0; j < rootNumber; j++) {
-                row.add(new Hole(i, j, stationsCopy.get(index++)));
+        for (int i = 0; i < sideLength; i++) {
+            for (int j = 0; j < sideLength; j++) {
+                holes.add(new Hole(i, j, stationsCopy.get(index++)));
             }
-            holes.add(row);
         }
     }
 
-    public int getNumberOfSpots() {
-        return numberOfSpots;
+    public double getFitnessScore() {
+        return this.fitnessScore;
+    }
+
+    public void setFitnessScore(final double fitnessScore) {
+        this.fitnessScore = fitnessScore;
     }
 
     public int getNumberOfHoles() {
         return numberOfHoles;
     }
 
-    public ArrayList<ArrayList<Hole>> getHoles() {
+    public int getSideLength() {
+        return sideLength;
+    }
+
+    public ArrayList<Hole> getHoles() {
         return holes;
     }
 
@@ -80,12 +116,10 @@ public class Floor {
     }
 
     public Floor deepCopy() {
-        ArrayList<ArrayList<Hole>> holesCopy = holes.stream()
-                .map(row -> row.stream()
-                        .map(Hole::deepCopy)
-                        .collect(Collectors.toCollection(ArrayList::new)))
+        ArrayList<Hole> holesCopy = holes.stream()
+                .map(Hole::deepCopy)
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        return new Floor(this.numberOfSpots, this.numberOfHoles, holesCopy);
+        return new Floor(this.fitnessScore, this.numberOfHoles, this.sideLength, holesCopy);
     }
 }
