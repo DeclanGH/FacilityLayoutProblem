@@ -1,30 +1,32 @@
 package io.github.declangh.facilitylayoutproblem.view;
 
 import io.github.declangh.facilitylayoutproblem.model.Floor;
+import io.github.declangh.facilitylayoutproblem.model.Hole;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.SwingUtilities;
+import java.util.ArrayList;
 
-public class Display extends JFrame {
-
-    public static final String PROJECT_TITLE = "Facility Layout Problem";
-
-    public static final int DISPLAY_HEIGHT = 600;
-    public static final int DISPLAY_WIDTH = 600;
+public class Display {
+    private final ArrayList<Floor> floorSnapshots;
 
     public Display() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle(PROJECT_TITLE);
-        setSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-        setResizable(true);
-        setLocationRelativeTo(null);
-        setLayout(new GridLayout(1, 1, 1, 1));
+        this.floorSnapshots = new ArrayList<>();
     }
 
-    public void show(Floor floor) {
-        Panel panel = new Panel(floor);
-        add(panel);
+    public synchronized void submitFloor(Floor floor, String threadName, int generation) {
+        if (generation == floorSnapshots.size()) {
+            floorSnapshots.add(floor);
+            int count = 0;
+            for (Hole hole : floor.getHoles()) {
+                if (hole.isOccupied()) count += 1;
+            }
+            System.out.println(count);
+            System.out.println(threadName + " | Generation: " + generation + " |  fitness score: "
+                    + floor.getFitnessScore() + " | display size: " + floorSnapshots.size());
+        }
+    }
 
-        setVisible(true);
+    public void showSnapshots() {
+        SwingUtilities.invokeLater(() -> new Draw(floorSnapshots));
     }
 }
